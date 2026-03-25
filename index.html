@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<title>FinKu — Keuangan Pribadi Intann Cantikk</title>
+<link rel="apple-touch-icon" href="poto.jpg">
+
+<link rel="icon" type="image/png" sizes="192x192" href="poto.jpg">
+<link rel="shortcut icon" href="poto.jpg" type="image/x-icon">
+
+<meta name="theme-color" content="#0B1120"> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0B1120;
+  --ink2:#3D4F66;
+  --sub:#8A9BB5;
+  --surface:#F0F3F9;
+  --card:#FFFFFF;
+  --border:#E2E8F2;
+  --green:#00C48C;
+  --green-light:#E6FAF4;
+  --red:#FF4D6A;
+  --red-light:#FFECEF;
+  --blue:#2563FF;
+  --blue-light:#EEF2FF;
+  --yellow:#FFB020;
+  --yellow-light:#FFF8E6;
+  --navy:#0B1120;
+  --nb:72px;
+}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink)}
+h1,h2,h3,.sora{font-family:'Sora',sans-serif}
+
+/* APP SHELL */
+.app{max-width:430px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--surface)}
+.content{flex:1;overflow-y:auto;padding-bottom:calc(var(--nb)+8px);scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+.page{display:none;animation:fadeUp .28s ease both}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════
+   HOME PAGE
+═══════════════════════════════ */
+.home-hero {
+  /* Gradien ditulis pertama (lapisan atas), Gambar kedua (lapisan bawah) */
+  background: 
+    linear-gradient(160deg, rgba(11, 17, 32, 0.8) 0%, rgba(26, 45, 90, 0.7) 55%, rgba(37, 99, 255, 0.5) 100%),
+    url('img/poto.jpg'); 
+
+  /* Pastikan pengaturan posisi gambar ada di sini */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Kode asli kamu */
+  padding: 48px 22px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+
+.home-hero::before{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(37,99,255,.15);top:-100px;right:-80px}
+.home-hero::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(0,196,140,.08);bottom:-80px;left:-40px}
+.hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;position:relative;z-index:1}
+.hero-greeting p{font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.3px}
+.hero-greeting h2{font-family:'Sora',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-top:2px}
+.hero-avatar {
+    /* 1. Ukuran tetap sama */
+    width: 40px;
+    height: 40px;
+
+    /* 2. Ini yang membuat gambar menjadi lingkaran sempurna */
+    border-radius: 50%;
+
+    /* 3. Penting: Menjaga foto tidak gepeng jika aslinya bukan persegi */
+    /* 'cover' akan memotong (crop) bagian tepi foto agar pas di lingkaran */
+    object-fit: cover;
+    
+    /* 4. Menjaga posisi di dalam layout */
+    flex-shrink: 0;
+
+    /* Opsional: Tambahkan border tipis agar terlihat lebih pop */
+    /* border: 2px solid #fff; */
+}
+
+/* Balance */
+.hero-balance{position:relative;z-index:1;margin-bottom:20px}
+.balance-lbl{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px}
+.balance-val{font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px}
+.balance-sub{font-size:12px;color:rgba(255,255,255,.45);margin-top:3px}
+
+/* Income/Expense pills */
+.ie-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative;z-index:1}
+.ie-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.ie-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ie-dot.g{background:var(--green)}
+.ie-dot.r{background:var(--red)}
+.ie-info p{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:2px}
+.ie-info h4{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#fff}
+
+/* Quick Actions */
+.section{padding:18px 18px 0}
+.sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sec-title{font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:var(--ink)}
+.sec-link{font-size:12px;color:var(--blue);font-weight:600;cursor:pointer}
+
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.qa-btn{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;padding:4px 2px;background:none;border:none;font-family:inherit}
+.qa-btn:active .qa-ico{transform:scale(.91)}
+.qa-ico{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;font-size:20px;transition:transform .15s}
+.qa-lbl{font-size:10.5px;font-weight:500;color:var(--ink2);text-align:center;line-height:1.3}
+
+/* Chart Section */
+.chart-card{margin:14px 18px 0;background:var(--card);border-radius:20px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.chart-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.chart-title{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--ink)}
+.filter-tabs{display:flex;gap:4px;background:var(--surface);border-radius:10px;padding:3px}
+.ftab{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:600;color:var(--sub);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .2s}
+.ftab.active{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.chart-wrap{position:relative;height:160px}
+
+/* Donut chart */
+.donut-wrap{position:relative;height:160px;display:flex;align-items:center;justify-content:center}
+.donut-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink2)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Recent TX */
+.tx-list{padding:0 18px 8px}
+.tx-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.tx-item:last-child{border-bottom:none}
+.tx-ico{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-size:13.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-cat{font-size:11px;color:var(--sub);margin-top:1px}
+.tx-amt{font-size:13.5px;font-weight:700;white-space:nowrap}
+.tx-amt.in{color:var(--green)}
+.tx-amt.out{color:var(--red)}
+
+/* ═══════════════════════════════
+   ADD TRANSACTION PAGE
+═══════════════════════════════ */
+.page-hd{padding:48px 18px 14px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.page-hd h2{font-family:'Sora',sans-serif;font-size:18px;font-weight:700}
+.page-hd p{font-size:12px;color:var(--sub);margin-top:2px}
+
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface);border-radius:14px;padding:4px;margin:14px 18px 0}
+.type-btn{padding:11px;border-radius:11px;border:none;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.type-btn.income.active{background:var(--green);color:#fff;box-shadow:0 3px 10px rgba(0,196,140,.3)}
+.type-btn.expense.active{background:var(--red);color:#fff;box-shadow:0 3px 10px rgba(255,77,106,.3)}
+.type-btn:not(.active){background:transparent;color:var(--sub)}
+
+.tx-form{padding:14px 18px}
+.form-group{margin-bottom:14px}
+.form-lbl{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px}
+.form-input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--border);background:var(--card);font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .2s}
+.form-input:focus{border-color:var(--blue)}
+.form-input.big{font-family:'Sora',sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;text-align:center;padding:18px}
+
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cat-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:13px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all .2s;font-family:inherit}
+.cat-btn .cat-ico{font-size:20px}
+.cat-btn .cat-lbl{font-size:10px;font-weight:600;color:var(--sub)}
+.cat-btn.selected{border-color:var(--blue);background:var(--blue-light)}
+.cat-btn.selected .cat-lbl{color:var(--blue)}
+
+.submit-btn{width:100%;padding:15px;border-radius:15px;border:none;font-family:'Sora',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px}
+.submit-btn.income-btn{background:var(--green);color:#fff;box-shadow:0 4px 16px rgba(0,196,140,.35)}
+.submit-btn.expense-btn{background:var(--red);color:#fff;box-shadow:0 4px 16px rgba(255,77,106,.35)}
+.submit-btn:active{transform:scale(.97);opacity:.9}
+
+/* ═══════════════════════════════
+   UTANG PIUTANG PAGE
+═══════════════════════════════ */
+.up-tabs{display:flex;gap:0;margin:14px 18px 0;background:var(--surface);border-radius:14px;padding:4px}
+.up-tab{flex:1;padding:10px;border-radius:11px;border:none;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:var(--sub)}
+.up-tab.active.utang{background:var(--red);color:#fff;box-shadow:0 3px 10px rgba(255,77,106,.3)}
+.up-tab.active.piutang{background:var(--green);color:#fff;box-shadow:0 3px 10px rgba(0,196,140,.3)}
+
+.up-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 18px 0}
+.up-sum-card{border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.up-sum-card.red{background:var(--red-light)}
+.up-sum-card.green{background:var(--green-light)}
+.up-sum-lbl{font-size:11px;font-weight:600;color:var(--sub)}
+.up-sum-val{font-family:'Sora',sans-serif;font-size:18px;font-weight:800}
+.up-sum-val.red{color:var(--red)}
+.up-sum-val.green{color:var(--green)}
+
+.up-list{padding:4px 18px 10px}
+.up-item{background:var(--card);border-radius:16px;padding:14px;margin-top:10px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.up-avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:700;font-family:'Sora',sans-serif;flex-shrink:0}
+.up-avatar.red{background:var(--red-light);color:var(--red)}
+.up-avatar.green{background:var(--green-light);color:var(--green)}
+.up-info{flex:1}
+.up-name{font-size:14px;font-weight:700;color:var(--ink)}
+.up-due{font-size:11px;color:var(--sub);margin-top:2px}
+.up-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px}
+.up-status.lunas{background:var(--green-light);color:var(--green)}
+.up-status.belum{background:var(--red-light);color:var(--red)}
+.up-right{text-align:right}
+.up-amt{font-family:'Sora',sans-serif;font-size:14px;font-weight:800}
+.up-amt.red{color:var(--red)}
+.up-amt.green{color:var(--green)}
+
+.add-up-btn{margin:14px 18px 0;width:calc(100% - 36px);padding:13px;border-radius:14px;border:2px dashed var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--sub);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.add-up-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(11,17,32,.6);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-end;justify-content:center;max-width:430px;margin:0 auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:24px 24px 0 0;padding:20px 18px 36px;width:100%;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-bar{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.modal h3{font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px}
+.modal-close{position:absolute;right:18px;top:18px;width:30px;height:30px;border-radius:50%;background:var(--surface);border:none;font-size:16px;cursor:pointer;display:grid;place-items:center}
+
+/* NAVBAR */
+.navbar{height:var(--nb);background:var(--card);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 8px;z-index:100;flex-shrink:0}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;cursor:pointer;border:none;background:none;font-family:inherit;transition:transform .15s}
+.nav-btn:active{transform:scale(.9)}
+.nav-ico{width:26px;height:26px;display:grid;place-items:center}
+.nav-lbl{font-size:10px;font-weight:600;color:var(--sub)}
+.nav-btn.active .nav-lbl{color:var(--blue)}
+.nav-btn.active svg{stroke:var(--blue)}
+.nav-fab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;border:none;background:none;font-family:inherit}
+.fab{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#60A5FA);display:grid;place-items:center;box-shadow:0 4px 18px rgba(37,99,255,.45);margin-top:-22px;transition:transform .15s,box-shadow .15s}
+.nav-fab:active .fab{transform:scale(.92);box-shadow:0 2px 8px rgba(37,99,255,.3)}
+.nav-fab .nav-lbl{color:var(--blue);font-weight:700}
+svg{display:block}
+
+/* TOAST */
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;transition:transform .3s ease;white-space:nowrap;max-width:380px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Misc */
+.empty-state{text-align:center;padding:40px 20px;color:var(--sub)}
+.empty-state .es-ico{font-size:48px;margin-bottom:10px}
+.empty-state p{font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="content">
+
+<!-- ══════════════ HOME ══════════════ -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <div class="hero-top">
+      <div class="hero-greeting">
+        <p>Uang Pribadi Intann</p>
+        <h2 id="hero-month"></h2>
+      </div>
+      <img class="hero-avatar" src="img/poto.jpg" alt="" />
+    </div>
+    <div class="hero-balance">
+      <p class="balance-lbl">Total Saldo</p>
+      <p class="balance-val" id="home-balance">Rp 0</p>
+      <p class="balance-sub">Diperbarui barusan</p>
+    </div>
+    <div class="ie-row">
+      <div class="ie-pill"><span class="ie-dot g"></span><div class="ie-info"><p>Pemasukan</p><h4 id="home-income">Rp 0</h4></div></div>
+      <div class="ie-pill"><span class="ie-dot r"></span><div class="ie-info"><p>Pengeluaran</p><h4 id="home-expense">Rp 0</h4></div></div>
+    </div>
+  </div>
+
+  <!-- Quick Actions Pemasukan -->
+  <div class="section">
+    <div class="sec-hd"><p class="sec-title">💰 Tambah Pemasukan</p></div>
+    <div class="qa-grid">
+      <button class="qa-btn" onclick="quickAdd('income','Gaji','💼','Gaji')"><div class="qa-ico" style="background:#E6FAF4">💼</div><span class="qa-lbl">Gaji</span></button>
+      <button class="qa-btn" onclick="quickAdd('income','Bonus','🎁','Bonus')"><div class="qa-ico" style="background:#FFF8E6">🎁</div><span class="qa-lbl">Bonus</span></button>
+      <button class="qa-btn" onclick="quickAdd('income','Freelance','💻','Freelance')"><div class="qa-ico" style="background:#EEF2FF">💻</div><span class="qa-lbl">Freelance</span></button>
+      <button class="qa-btn" onclick="quickAdd('income','nasa','📈','nasa')"><div class="qa-ico" style="background:#F0FFF4">📈</div><span class="qa-lbl">nasa</span></button>
+    </div>
+  </div>
+
+  <!-- Quick Actions Pengeluaran -->
+  <div class="section" style="margin-top:14px">
+    <div class="sec-hd"><p class="sec-title">💸 Tambah Pengeluaran</p></div>
+    <div class="qa-grid">
+      <button class="qa-btn" onclick="quickAdd('expense','Token Listrik','⚡','Tagihan')"><div class="qa-ico" style="background:#FFF8E6">⚡</div><span class="qa-lbl">Token</span></button>
+      <button class="qa-btn" onclick="quickAdd('expense','Pulsa','📱','Komunikasi')"><div class="qa-ico" style="background:#F2EEFF">📱</div><span class="qa-lbl">Pulsa</span></button>
+      <button class="qa-btn" onclick="quickAdd('expense','Makan','🍜','Makanan')"><div class="qa-ico" style="background:#FFF0EA">🍜</div><span class="qa-lbl">Makan</span></button>
+      <button class="qa-btn" onclick="quickAdd('expense','Transport','🚗','Transport')"><div class="qa-ico" style="background:#EEF2FF">🚗</div><span class="qa-lbl">Transport</span></button>
+    </div>
+  </div>
+
+  <!-- Bar Chart -->
+  <div class="chart-card">
+    <div class="chart-hd">
+      <p class="chart-title">Pemasukan vs Pengeluaran</p>
+      <div class="filter-tabs" id="bar-filter">
+        <button class="ftab active" onclick="setBarFilter('7d',this)">7H</button>
+        <button class="ftab" onclick="setBarFilter('30d',this)">30H</button>
+        <button class="ftab" onclick="setBarFilter('all',this)">Semua</button>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+  </div>
+
+  <!-- Donut Chart -->
+  <div class="chart-card" style="margin-top:10px">
+    <div class="chart-hd">
+      <p class="chart-title">Kategori</p>
+      <div class="filter-tabs" id="donut-filter">
+        <button class="ftab active" onclick="setDonutFilter('all',this)">Semua</button>
+        <button class="ftab" onclick="setDonutFilter('income',this)">Masuk</button>
+        <button class="ftab" onclick="setDonutFilter('expense',this)">Keluar</button>
+      </div>
+    </div>
+    <div class="donut-wrap"><canvas id="donutChart" style="max-height:150px;max-width:150px"></canvas></div>
+    <div class="donut-legend" id="donut-legend"></div>
+  </div>
+
+  <!-- Recent TX -->
+  <div class="section"><div class="sec-hd"><p class="sec-title">Transaksi Terbaru</p><span class="sec-link" onclick="showPage('history')">Lihat semua</span></div></div>
+  <div class="tx-list" id="home-tx-list"></div>
+  <div style="height:8px"></div>
+</div>
+
+<!-- ══════════════ ADD TX ══════════════ -->
+<div class="page" id="page-add">
+  <div class="page-hd">
+    <h2>Tambah Transaksi</h2>
+    <p>Catat pemasukan atau pengeluaran</p>
+  </div>
+  <div class="type-toggle">
+    <button class="type-btn income active" id="btn-income" onclick="setType('income')">💰 Pemasukan</button>
+    <button class="type-btn expense" id="btn-expense" onclick="setType('expense')">💸 Pengeluaran</button>
+  </div>
+  <div class="tx-form">
+    <div class="form-group">
+      <p class="form-lbl">Jumlah</p>
+      <input class="form-input big" id="tx-amount" type="number" placeholder="0" inputmode="numeric"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Keterangan</p>
+      <input class="form-input" id="tx-desc" type="text" placeholder="Contoh: Gaji Maret, Bayar Listrik…"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Tanggal</p>
+      <input class="form-input" id="tx-date" type="date"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Kategori</p>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+    <button class="submit-btn income-btn" id="submit-tx" onclick="submitTx()">+ Simpan Transaksi</button>
+  </div>
+</div>
+
+<!-- ══════════════ HISTORY ══════════════ -->
+<div class="page" id="page-history">
+  <div class="page-hd">
+    <h2>Riwayat</h2>
+    <p>Semua transaksi tercatat</p>
+  </div>
+  <div style="padding:10px 18px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none">
+    <button class="ftab active" style="white-space:nowrap" onclick="setHistFilter('all',this)">Semua</button>
+    <button class="ftab" style="white-space:nowrap" onclick="setHistFilter('income',this)">Pemasukan</button>
+    <button class="ftab" style="white-space:nowrap" onclick="setHistFilter('expense',this)">Pengeluaran</button>
+  </div>
+  <div class="tx-list" id="hist-list" style="padding-top:6px"></div>
+</div>
+
+<!-- ══════════════ UTANG PIUTANG ══════════════ -->
+<div class="page" id="page-up">
+  <div class="page-hd">
+    <h2>Utang & Piutang</h2>
+    <p>Kelola pinjaman & tagihan</p>
+  </div>
+  <div class="up-tabs">
+    <button class="up-tab utang active" id="tab-utang" onclick="setUpTab('utang')">💳 Utang Saya</button>
+    <button class="up-tab piutang" id="tab-piutang" onclick="setUpTab('piutang')">🤝 Piutang Saya</button>
+  </div>
+  <div class="up-summary">
+    <div class="up-sum-card red"><p class="up-sum-lbl">Total Utang</p><p class="up-sum-val red" id="total-utang">Rp 0</p></div>
+    <div class="up-sum-card green"><p class="up-sum-lbl">Total Piutang</p><p class="up-sum-val green" id="total-piutang">Rp 0</p></div>
+  </div>
+  <button class="add-up-btn" onclick="openUpModal()"><span>＋</span> <span id="add-up-lbl">Tambah Utang</span></button>
+  <div class="up-list" id="up-list"></div>
+</div>
+
+</div><!-- end content -->
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <button class="nav-btn active" id="nav-home" onclick="showPage('home')">
+    <div class="nav-ico"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <span class="nav-lbl">Beranda</span>
+  </button>
+  <button class="nav-btn" id="nav-history" onclick="showPage('history')">
+    <div class="nav-ico"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    <span class="nav-lbl">Riwayat</span>
+  </button>
+  <button class="nav-fab" onclick="showPage('add')">
+    <div class="fab"><svg width="26" height="26" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+    <span class="nav-lbl">Tambah</span>
+  </button>
+  <button class="nav-btn" id="nav-up" onclick="showPage('up')">
+    <div class="nav-ico"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+    <span class="nav-lbl">Utang</span>
+  </button>
+  <button class="nav-btn" id="nav-hist2" onclick="showPage('history')" style="display:none"></button>
+</nav>
+</div><!-- end app -->
+
+<!-- MODAL QUICK ADD -->
+<div class="modal-overlay" id="modal-quick">
+  <div class="modal" style="position:relative">
+    <div class="modal-bar"></div>
+    <button class="modal-close" onclick="closeModal('modal-quick')">✕</button>
+    <h3 id="modal-q-title">Tambah Transaksi</h3>
+    <div class="form-group">
+      <p class="form-lbl">Jumlah</p>
+      <input class="form-input big" id="q-amount" type="number" placeholder="0" inputmode="numeric"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Keterangan</p>
+      <input class="form-input" id="q-desc" type="text"/>
+    </div>
+    <button class="submit-btn" id="q-submit" onclick="submitQuick()">Simpan</button>
+  </div>
+</div>
+
+<!-- MODAL UTANG PIUTANG -->
+<div class="modal-overlay" id="modal-up">
+  <div class="modal" style="position:relative">
+    <div class="modal-bar"></div>
+    <button class="modal-close" onclick="closeModal('modal-up')">✕</button>
+    <h3 id="modal-up-title">Tambah Utang</h3>
+    <div class="form-group">
+      <p class="form-lbl">Nama Orang</p>
+      <input class="form-input" id="up-name" type="text" placeholder="Nama teman/saudara…"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Jumlah</p>
+      <input class="form-input big" id="up-amount" type="number" placeholder="0" inputmode="numeric"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Keterangan</p>
+      <input class="form-input" id="up-keterangan" type="text" placeholder="Untuk apa…"/>
+    </div>
+    <div class="form-group">
+      <p class="form-lbl">Jatuh Tempo</p>
+      <input class="form-input" id="up-due" type="date"/>
+    </div>
+    <button class="submit-btn" id="up-submit" onclick="submitUp()">Simpan</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA LAYER — localStorage
+// ═══════════════════════════════════════
+const LS_TX = 'finku_tx';
+const LS_UP = 'finku_up';
+
+function getTx(){ try{ return JSON.parse(localStorage.getItem(LS_TX)||'[]') }catch(e){return[]} }
+function saveTx(d){ localStorage.setItem(LS_TX, JSON.stringify(d)) }
+function getUp(){ try{ return JSON.parse(localStorage.getItem(LS_UP)||'[]') }catch(e){return[]} }
+function saveUp(d){ localStorage.setItem(LS_UP, JSON.stringify(d)) }
+
+
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2) }
+function dateStr(d,offset=0){ const x=new Date(d); x.setDate(x.getDate()+offset); return x.toISOString().split('T')[0] }
+
+// ═══════════════════════════════════════
+// FORMAT
+// ═══════════════════════════════════════
+function rp(n){ return 'Rp '+Math.abs(n).toLocaleString('id-ID') }
+function fmtDate(s){ const d=new Date(s); return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) }
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+const PAGES=['home','add','history','up'];
+const NAV_MAP={home:'nav-home',history:'nav-history',up:'nav-up'};
+let currentPage='home';
+
+function showPage(name){
+  PAGES.forEach(p=>document.getElementById('page-'+p).classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelector('.content').scrollTop=0;
+  if(NAV_MAP[name]) document.getElementById(NAV_MAP[name]).classList.add('active');
+  currentPage=name;
+  if(name==='home') renderHome();
+  if(name==='history') renderHistory('all');
+  if(name==='up') renderUp();
+}
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open') }
+function closeModal(id){ document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open') })
+});
+
+// ═══════════════════════════════════════
+// HOME RENDER
+// ═══════════════════════════════════════
+function renderHome(){
+  const tx=getTx();
+  const income=tx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const expense=tx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const balance=income-expense;
+  
+  document.getElementById('home-balance').textContent = rp(balance);
+  document.getElementById('home-income').textContent = rp(income);
+  document.getElementById('home-expense').textContent = rp(expense);
+
+  const now=new Date();
+  document.getElementById('hero-month').textContent = now.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+
+  // Recent 5
+  const recent=[...tx].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  const list=document.getElementById('home-tx-list');
+  if(!recent.length){
+    list.innerHTML='<div class="empty-state"><div class="es-ico">📭</div><p>Belum ada transaksi</p></div>';
+  } else {
+    list.innerHTML=recent.map(t=>`
+      <div class="tx-item">
+        <div class="tx-ico" style="background:${t.type==='income'?'var(--green-light)':'var(--red-light)'}">${t.emoji||'💰'}</div>
+        <div class="tx-info"><p class="tx-name">${t.desc}</p><p class="tx-cat">${t.category} • ${fmtDate(t.date)}</p></div>
+        <p class="tx-amt ${t.type==='income'?'in':'out'}">${t.type==='income'?'+':'-'}${rp(t.amount)}</p>
+      </div>`).join('');
+  }
+
+  renderBarChart('7d');
+  renderDonutChart('all');
+}
+
+// ═══════════════════════════════════════
+// BAR CHART
+// ═══════════════════════════════════════
+let barChartInst=null;
+let barFilter='7d';
+
+function setBarFilter(f,el){
+  barFilter=f;
+  document.querySelectorAll('#bar-filter .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderBarChart(f);
+}
+
+function renderBarChart(filter){
+  const tx=getTx();
+  const now=new Date();
+  const days=filter==='7d'?7:filter==='30d'?30:60;
+  const labels=[]; const incomeData=[]; const expenseData=[];
+
+  if(filter==='all'){
+    // group by month
+    const months={};
+    tx.forEach(t=>{
+      const k=t.date.slice(0,7);
+      if(!months[k]) months[k]={i:0,e:0};
+      if(t.type==='income') months[k].i+=t.amount;
+      else months[k].e+=t.amount;
+    });
+    const keys=Object.keys(months).sort().slice(-6);
+    keys.forEach(k=>{
+      const [y,m]=k.split('-');
+      labels.push(new Date(y,m-1).toLocaleDateString('id-ID',{month:'short'}));
+      incomeData.push(months[k].i);
+      expenseData.push(months[k].e);
+    });
+  } else {
+    for(let i=days-1;i>=0;i--){
+      const d=new Date(now); d.setDate(d.getDate()-i);
+      const key=d.toISOString().split('T')[0];
+      labels.push(i===0?'Hari ini':d.toLocaleDateString('id-ID',{day:'numeric',month:'short'}));
+      const dayTx=tx.filter(t=>t.date===key);
+      incomeData.push(dayTx.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0));
+      expenseData.push(dayTx.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0));
+    }
+    // compact labels
+    if(days>14){ labels.forEach((_,i)=>{ if(i%3!==0 && i!==labels.length-1) labels[i]=''; }) }
+  }
+
+  const ctx=document.getElementById('barChart').getContext('2d');
+  if(barChartInst) barChartInst.destroy();
+  barChartInst=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Pemasukan',data:incomeData,backgroundColor:'rgba(0,196,140,.75)',borderRadius:6,borderSkipped:false},
+        {label:'Pengeluaran',data:expenseData,backgroundColor:'rgba(255,77,106,.75)',borderRadius:6,borderSkipped:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>rp(c.raw)}}},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:9},color:'#8A9BB5',maxRotation:0}},
+        y:{grid:{color:'rgba(0,0,0,.04)'},ticks:{font:{size:9},color:'#8A9BB5',callback:v=>v>=1000000?'Rp '+(v/1000000)+'jt':v>=1000?'Rp '+(v/1000)+'rb':rp(v)}}
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════
+// DONUT CHART
+// ═══════════════════════════════════════
+let donutInst=null;
+let donutFilter='all';
+const DONUT_COLORS=['#2563FF','#00C48C','#FF4D6A','#FFB020','#8B5CF6','#EC4899','#14B8A6','#F97316'];
+
+function setDonutFilter(f,el){
+  donutFilter=f;
+  document.querySelectorAll('#donut-filter .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderDonutChart(f);
+}
+
+function renderDonutChart(filter){
+  const tx=getTx();
+  const filtered=filter==='all'?tx:tx.filter(t=>t.type===(filter==='income'?'income':'expense'));
+  const cats={};
+  filtered.forEach(t=>{ cats[t.category]=(cats[t.category]||0)+t.amount });
+  const keys=Object.keys(cats);
+
+  if(!keys.length){
+    const ctx=document.getElementById('donutChart').getContext('2d');
+    if(donutInst) donutInst.destroy();
+    document.getElementById('donut-legend').innerHTML='<p style="color:var(--sub);font-size:12px;padding:8px 0">Belum ada data</p>';
+    return;
+  }
+
+  const ctx=document.getElementById('donutChart').getContext('2d');
+  if(donutInst) donutInst.destroy();
+  donutInst=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:keys,
+      datasets:[{data:keys.map(k=>cats[k]),backgroundColor:DONUT_COLORS.slice(0,keys.length),borderWidth:0,hoverOffset:6}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'68%',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${rp(c.raw)}`}}}
+    }
+  });
+
+  document.getElementById('donut-legend').innerHTML=keys.map((k,i)=>`
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${DONUT_COLORS[i]}"></span>
+      <span>${k}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// ADD TRANSACTION
+// ═══════════════════════════════════════
+const CATS={
+  income:[
+    {label:'Gaji',emoji:'💼'},{label:'Bonus',emoji:'🎁'},{label:'Freelance',emoji:'💻'},
+    {label:'nasa',emoji:'📈'},{label:'Hadiah',emoji:'🎀'},{label:'Lainnya',emoji:'💵'}
+  ],
+  expense:[
+    {label:'Makanan',emoji:'🍜'},{label:'Transport',emoji:'🚗'},{label:'Tagihan',emoji:'⚡'},
+    {label:'Komunikasi',emoji:'📱'},{label:'Belanja',emoji:'🛍'},{label:'Hiburan',emoji:'🎬'},
+    {label:'Kesehatan',emoji:'💊'},{label:'Lainnya',emoji:'💸'}
+  ]
+};
+
+let currentType='income';
+let selectedCat=null;
+
+function setType(type){
+  currentType=type;
+  selectedCat=null;
+  document.getElementById('btn-income').className='type-btn income'+(type==='income'?' active':'');
+  document.getElementById('btn-expense').className='type-btn expense'+(type==='expense'?' active':'');
+  const btn=document.getElementById('submit-tx');
+  btn.className='submit-btn '+(type==='income'?'income-btn':'expense-btn');
+  btn.textContent=type==='income'?'+ Simpan Pemasukan':'+ Simpan Pengeluaran';
+  renderCatGrid();
+}
+
+function renderCatGrid(){
+  const grid=document.getElementById('cat-grid');
+  const cats=CATS[currentType];
+  grid.innerHTML=cats.map(c=>`
+    <button class="cat-btn${selectedCat===c.label?' selected':''}" onclick="selectCat('${c.label}')">
+      <span class="cat-ico">${c.emoji}</span>
+      <span class="cat-lbl">${c.label}</span>
+    </button>`).join('');
+}
+
+function selectCat(label){
+  selectedCat=label;
+  renderCatGrid();
+}
+
+function submitTx(){
+  const amount=parseFloat(document.getElementById('tx-amount').value);
+  const desc=document.getElementById('tx-desc').value.trim();
+  const date=document.getElementById('tx-date').value;
+  if(!amount||amount<=0){showToast('⚠️ Masukkan jumlah!');return}
+  if(!desc){showToast('⚠️ Isi keterangan!');return}
+  if(!date){showToast('⚠️ Pilih tanggal!');return}
+  if(!selectedCat){showToast('⚠️ Pilih kategori!');return}
+
+  const cat=CATS[currentType].find(c=>c.label===selectedCat);
+  const tx=getTx();
+  tx.push({id:uid(),type:currentType,amount,desc,category:selectedCat,emoji:cat?.emoji||'💰',date});
+  saveTx(tx);
+
+  document.getElementById('tx-amount').value='';
+  document.getElementById('tx-desc').value='';
+  selectedCat=null;
+  renderCatGrid();
+  showToast('✅ Transaksi tersimpan!');
+  showPage('home');
+}
+
+// Quick Add from home
+let qType,qCat,qEmoji;
+function quickAdd(type,desc,emoji,cat){
+  qType=type; qCat=cat; qEmoji=emoji;
+  document.getElementById('modal-q-title').textContent=(type==='income'?'💰 ':'💸 ')+desc;
+  document.getElementById('q-desc').value=desc;
+  document.getElementById('q-amount').value='';
+  const btn=document.getElementById('q-submit');
+  btn.className='submit-btn '+(type==='income'?'income-btn':'expense-btn');
+  btn.textContent='Simpan';
+  openModal('modal-quick');
+  setTimeout(()=>document.getElementById('q-amount').focus(),300);
+}
+
+function submitQuick(){
+  const amount=parseFloat(document.getElementById('q-amount').value);
+  const desc=document.getElementById('q-desc').value.trim();
+  if(!amount||amount<=0){showToast('⚠️ Masukkan jumlah!');return}
+  const tx=getTx();
+  tx.push({id:uid(),type:qType,amount,desc,category:qCat,emoji:qEmoji,date:dateStr(new Date())});
+  saveTx(tx);
+  closeModal('modal-quick');
+  showToast('✅ Tersimpan!');
+  renderHome();
+}
+
+// ═══════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════
+let histFilter='all';
+function setHistFilter(f,el){
+  histFilter=f;
+  document.querySelectorAll('#page-history .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderHistory(f);
+}
+
+function renderHistory(filter){
+  const tx=getTx();
+  const filtered=filter==='all'?tx:tx.filter(t=>t.type===filter);
+  const sorted=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const list=document.getElementById('hist-list');
+  if(!sorted.length){
+    list.innerHTML='<div class="empty-state"><div class="es-ico">📭</div><p>Tidak ada transaksi</p></div>';
+    return;
+  }
+  // group by date
+  const groups={};
+  sorted.forEach(t=>{ if(!groups[t.date]) groups[t.date]=[]; groups[t.date].push(t) });
+  list.innerHTML=Object.keys(groups).sort((a,b)=>new Date(b)-new Date(a)).map(date=>`
+    <div style="padding:10px 0 2px;font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.5px">${fmtDate(date)}</div>
+    ${groups[date].map(t=>`
+      <div class="tx-item" onclick="deleteTxConfirm('${t.id}')">
+        <div class="tx-ico" style="background:${t.type==='income'?'var(--green-light)':'var(--red-light)'}">${t.emoji||'💰'}</div>
+        <div class="tx-info"><p class="tx-name">${t.desc}</p><p class="tx-cat">${t.category}</p></div>
+        <p class="tx-amt ${t.type==='income'?'in':'out'}">${t.type==='income'?'+':'-'}${rp(t.amount)}</p>
+      </div>`).join('')}`).join('');
+}
+
+function deleteTxConfirm(id){
+  if(confirm('Hapus transaksi ini?')){
+    saveTx(getTx().filter(t=>t.id!==id));
+    renderHistory(histFilter);
+    showToast('🗑️ Transaksi dihapus');
+  }
+}
+
+// ═══════════════════════════════════════
+// UTANG PIUTANG
+// ═══════════════════════════════════════
+let upTab='utang';
+
+function setUpTab(tab){
+  upTab=tab;
+  document.getElementById('tab-utang').className='up-tab utang'+(tab==='utang'?' active':'');
+  document.getElementById('tab-piutang').className='up-tab piutang'+(tab==='piutang'?' active':'');
+  document.getElementById('add-up-lbl').textContent='Tambah '+(tab==='utang'?'Utang':'Piutang');
+  renderUp();
+}
+
+function renderUp(){
+  const data=getUp();
+  const utang=data.filter(d=>d.type==='utang');
+  const piutang=data.filter(d=>d.type==='piutang');
+  const totalU=utang.filter(d=>!d.lunas).reduce((s,d)=>s+d.amount,0);
+  const totalP=piutang.filter(d=>!d.lunas).reduce((s,d)=>s+d.amount,0);
+  document.getElementById('total-utang').textContent=rp(totalU);
+  document.getElementById('total-piutang').textContent=rp(totalP);
+
+  const list=upTab==='utang'?utang:piutang;
+  const color=upTab==='utang'?'red':'green';
+  const ul=document.getElementById('up-list');
+  if(!list.length){
+    ul.innerHTML='<div class="empty-state"><div class="es-ico">'+(upTab==='utang'?'💳':'🤝')+'</div><p>Belum ada '+(upTab==='utang'?'utang':'piutang')+'</p></div>';
+    return;
+  }
+  ul.innerHTML=list.sort((a,b)=>a.lunas-b.lunas).map(d=>`
+    <div class="up-item">
+      <div class="up-avatar ${color}">${d.name.charAt(0).toUpperCase()}</div>
+      <div class="up-info">
+        <p class="up-name">${d.name}</p>
+        <p class="up-due">${d.keterangan} • ${fmtDate(d.due)}</p>
+      </div>
+      <div class="up-right">
+        <p class="up-amt ${color}">${rp(d.amount)}</p>
+        <span class="up-status ${d.lunas?'lunas':'belum'}" onclick="toggleLunas('${d.id}')" style="cursor:pointer">${d.lunas?'✓ Lunas':'Belum Lunas'}</span>
+      </div>
+    </div>`).join('');
+}
+
+function openUpModal(){
+  document.getElementById('modal-up-title').textContent='Tambah '+(upTab==='utang'?'Utang':'Piutang');
+  const btn=document.getElementById('up-submit');
+  btn.className='submit-btn '+(upTab==='utang'?'expense-btn':'income-btn');
+  document.getElementById('up-name').value='';
+  document.getElementById('up-amount').value='';
+  document.getElementById('up-keterangan').value='';
+  document.getElementById('up-due').value='';
+  openModal('modal-up');
+}
+
+function submitUp(){
+  const name=document.getElementById('up-name').value.trim();
+  const amount=parseFloat(document.getElementById('up-amount').value);
+  const ket=document.getElementById('up-keterangan').value.trim();
+  const due=document.getElementById('up-due').value;
+  if(!name){showToast('⚠️ Isi nama!');return}
+  if(!amount||amount<=0){showToast('⚠️ Masukkan jumlah!');return}
+  if(!due){showToast('⚠️ Pilih jatuh tempo!');return}
+  const data=getUp();
+  data.push({id:uid(),type:upTab,name,amount,keterangan:ket||'-',due,lunas:false});
+  saveUp(data);
+  closeModal('modal-up');
+  showToast('✅ Data tersimpan!');
+  renderUp();
+}
+
+function toggleLunas(id){
+  const data=getUp();
+  const idx=data.findIndex(d=>d.id===id);
+  if(idx>-1){ data[idx].lunas=!data[idx].lunas; saveUp(data); renderUp(); }
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+// Set today's date for form
+const todayInput=document.getElementById('tx-date');
+if(todayInput) todayInput.value=dateStr(new Date());
+
+// Init categories
+renderCatGrid();
+
+// Seed & render
+renderHome();
+
+console.log(getTx())
+</script>
+</body>
+</html>
